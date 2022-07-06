@@ -1,0 +1,27 @@
+@font-face {
+   font-family: 'YekanWeb';
+   src: url("assets/font/Yekan.ttf");
+}
+body{
+   font-family: 'YekanWeb';
+}
+.asli{
+   display: flex; 
+   font-size: 20px;
+   margin: 10px;
+}
+.main-nav{
+   max-width: 100%;
+}
+.top-side{
+   background-color: dodgerblue;
+   height: 30px;
+   color: azure;
+}
+.navbar{
+   background-color: coral !important;
+}
+.carousel{
+   width:80%;
+   margin: auto;
+}
