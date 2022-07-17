@@ -23,6 +23,7 @@ if (isset($_POST['login'])) {
         }
     }
 }
+  
 ?>
 <!DOCTYPE html>
 <html lang="en" dir="rtl">
@@ -114,14 +115,14 @@ if (isset($_POST['login'])) {
                         <lable>نام شما:</lable>
                         <span>
                             <?php 
-                                $query = "SELECT * FROM `tbl_users` WHERE Username = '{$_SESSION['Username']}'";
-                                $result = $connect->prepare();
+                                $query = "SELECT * FROM `tbl_users` where (`Username` = '{$_SESSION['Username']}')";
+                                $result = $connect->prepare($query);
                                 $result->execute();
                                 $user = $result->fetch(PDO::FETCH_ASSOC);
                                 if ($user === false) {
-                                    print "-";
-                                } else {
-                                    echo $user["User_Name"];
+                                    echo "_";
+                                }else{
+                                    echo $user['User_Name'];
                                 }
                             ?>
                         </span><br>
@@ -129,7 +130,7 @@ if (isset($_POST['login'])) {
                     </div>    
                 </div>
                 <?php
-                    }else{
+                    }else {
                 ?>        
                 <div class="card card-info">
                     <div class="card-header">
