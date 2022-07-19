@@ -1,23 +1,39 @@
 <?php
+session_start();
 include "../connection.php";
     if (isset($_SESSION["Username"])) {
         if (isset($_POST['edit'])) 
         {
+            if (isset($_FILES['img'])) {
+                $name = $_FILES['file']['name'];
+                $name = $_FILES['file']['tmp_name'];
+
+                if (move_uploaded_file($tmp,"upload/$name")) {
+                    echo "upload successfully";
+                }else {
+                    echo "Erroe :".$_FILES['file']['error'];
+                }
+            }
             $postID = $_GET['id'];
             $title = $_POST['Title'];
             $body = $_POST['body'];
-            $img = "";
+            $img = "http://localhost/SnowWeblogPHP/upload/".$file_name;
 
-            $sql = "UPDATE `tbl_posts` SET `PostTitle` = ?, `PostBody` = ?, `PostImage` = ?, `PostAuthor` = 'bhxa' WHERE `tbl_posts`.`id` =$postID ;";
+            $sql = "UPDATE `tbl_posts` SET `PostTitle` = :title, `PostBody` = :body, `PostImage` = :img WHERE `tbl_posts`.`id` =:id ;";
             $result = $connect->prepare($sql);
-            $result->bindvalue(1,$title,PDO::PARAM_STR);
-            $result->bindvalue(1,$body,PDO::PARAM_STR);
-            $result->bindvalue(1,$img,PDO::PARAM_STR);
-            
-            $result->execute();
+            $result->bindvalue(':title',$title,PDO::PARAM_STR);
+            $result->bindvalue(':body',$body,PDO::PARAM_STR);
+            $result->bindvalue(':img',$img,PDO::PARAM_STR);
+            $result->bindvalue(':id',$postID,PDO::PARAM_STR);
+
+            if ($result->execute()) {
+                $message = "<lable class='text-success'>مطلب باموفقیت ویرایش شد</lable>";
+            }else {
+                $message = "<lable class='text-success'>مطلب ویرایش نشد</lable>";
+            }
         }
     }else {
-        header ("Location: ../index.php");
+         header ("Location: ../index.php");
     }
 ?>
 <!DOCTYPE html>
@@ -41,7 +57,12 @@ include "../connection.php";
         $result->execute();
         $row = $result->fetch(PDO::FETCH_ASSOC);  
     ?>
-        <form action="" >
+        <form action="" method="POST" enctype="multipart/form-data">
+            <?php
+            if (isset($message)) {
+                echo $message.'<br>';
+            }
+            ?>
             <lable>عنوان مطلب</lable>
             <input type="text" name="Title" value="<?php echo $row['PostTitle']; ?>" class="form-control"><br>
             <lable>محتوا مطلب</lable>
