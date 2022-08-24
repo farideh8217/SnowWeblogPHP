@@ -1,4 +1,5 @@
 <?php
+// session_start();
 try{
     $server = "localhost";
     $database = "snowdb";

@@ -5,11 +5,12 @@ include "../connection.php";
         if (isset($_POST['edit'])) 
         {
             if (isset($_FILES['img'])) {
-                $name = $_FILES['file']['name'];
-                $name = $_FILES['file']['tmp_name'];
+                $file_name = $_FILES['img']['name'];
+                $tmp = $_FILES['img']['tmp_name'];
 
-                if (move_uploaded_file($tmp,"upload/$name")) {
+                if (move_uploaded_file($tmp,"upload/$file_name")) {
                     echo "upload successfully";
+                    $okimage = true;
                 }else {
                     echo "Erroe :".$_FILES['file']['error'];
                 }
@@ -17,15 +18,23 @@ include "../connection.php";
             $postID = $_GET['id'];
             $title = $_POST['Title'];
             $body = $_POST['body'];
-            $img = "http://localhost/SnowWeblogPHP/upload/".$file_name;
 
-            $sql = "UPDATE `tbl_posts` SET `PostTitle` = :title, `PostBody` = :body, `PostImage` = :img WHERE `tbl_posts`.`id` =:id ;";
-            $result = $connect->prepare($sql);
-            $result->bindvalue(':title',$title,PDO::PARAM_STR);
-            $result->bindvalue(':body',$body,PDO::PARAM_STR);
-            $result->bindvalue(':img',$img,PDO::PARAM_STR);
-            $result->bindvalue(':id',$postID,PDO::PARAM_STR);
+            if (isset($okimage)) {
+                $img = "upload/".$file_name;
 
+                $sql = "UPDATE `tbl_posts` SET `PostTitle` = :title, `PostBody` = :body, `PostImage` = :img WHERE `tbl_posts`.`id` =:id ;";
+                $result = $connect->prepare($sql);
+                $result->bindvalue(':title',$title,PDO::PARAM_STR);
+                $result->bindvalue(':body',$body,PDO::PARAM_STR);
+                $result->bindvalue(':img',$img,PDO::PARAM_STR);
+                $result->bindvalue(':id',$postID,PDO::PARAM_STR);
+            }else {
+                $sql = "UPDATE `tbl_posts` SET `PostTitle` = :title, `PostBody` = :body WHERE `tbl_posts`.`id` =:id ;";
+                $result = $connect->prepare($sql);
+                $result->bindvalue(':title',$title,PDO::PARAM_STR);
+                $result->bindvalue(':body',$body,PDO::PARAM_STR);
+                $result->bindvalue(':id',$postID,PDO::PARAM_STR);
+            }
             if ($result->execute()) {
                 $message = "<lable class='text-success'>مطلب باموفقیت ویرایش شد</lable>";
             }else {
@@ -68,11 +77,9 @@ include "../connection.php";
             <lable>محتوا مطلب</lable>
             <textarea name="body" id="" cols="30" rows="10" class="form-control"><?php echo $row['PostBody']; ?></textarea><br>
             <lable>تصویر مطلب</lable>
-            <input type="file" name="img" class="btn btn-warning">
+            <input type="file" name="img" value="<?php echo $row['PostImage']; ?>" class="btn btn-warning">
             <input type="submit" name="edit" value="ویرایش وانتشار" class="btn btn-info">
         </form>
     </div>
-
-
 </body>
 </html>

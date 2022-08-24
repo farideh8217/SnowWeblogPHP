@@ -6,7 +6,7 @@
         <h3 class="card-title"> مطالب وبلاگ</h3>
     </div>
     <div class="card-body">
-        <table class="table table-striped">
+        <table class="table table-striped" border="2">
         <tr>
             <th>آیدی مطلب</th>
             <th>عنوان مطلب</th>
@@ -17,13 +17,14 @@
             $query = "SELECT * FROM `tbl_posts` ORDER BY id DESC";
             $result = $connect->prepare($query);
             $result->execute();
-            foreach ($result as $rows) {
+            $posts = $result->fetchAll();
+            foreach($posts as $post) {
         ?>
         <tr>
-            <td><?= $rows['id']; ?></td>
-            <td><?= $rows['PostTitle']; ?></td>
-            <td><a href="deletepost.php?id=<?= $rows['id']; ?>">حذف</a></td>
-            <td><a href="editpost.php?id=<?= $rows['id']; ?>">ویرایش</a></td>
+            <td><?= $post['id']; ?></td>
+            <td><?= $post['PostTitle']; ?></td>
+            <td><a href="deletepost.php?id=<?= $post['id']; ?>">حذف</a></td>
+            <td><a href="editpost.php?id=<?= $post['id']; ?>">ویرایش</a></td>
         </tr>    
         <?php
             }
